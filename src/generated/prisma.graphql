@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Mon Jan 04 2021 15:54:04 GMT+0800 (Singapore Standard Time)
+# timestamp: Wed Jan 06 2021 07:00:11 GMT+0800 (Singapore Standard Time)
 
 type AggregateComment {
   count: Int!
@@ -949,6 +949,7 @@ type User implements Node {
   id: ID!
   name: String!
   email: String!
+  username: String!
   age: Int
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
@@ -968,6 +969,7 @@ input UserCreateInput {
   id: ID
   name: String!
   email: String!
+  username: String!
   age: Int
   posts: PostCreateManyWithoutAuthorInput
   comments: CommentCreateManyWithoutAuthorInput
@@ -987,6 +989,7 @@ input UserCreateWithoutCommentsInput {
   id: ID
   name: String!
   email: String!
+  username: String!
   age: Int
   posts: PostCreateManyWithoutAuthorInput
 }
@@ -995,6 +998,7 @@ input UserCreateWithoutPostsInput {
   id: ID
   name: String!
   email: String!
+  username: String!
   age: Int
   comments: CommentCreateManyWithoutAuthorInput
 }
@@ -1015,6 +1019,8 @@ enum UserOrderByInput {
   name_DESC
   email_ASC
   email_DESC
+  username_ASC
+  username_DESC
   age_ASC
   age_DESC
 }
@@ -1023,6 +1029,7 @@ type UserPreviousValues {
   id: ID!
   name: String!
   email: String!
+  username: String!
   age: Int
 }
 
@@ -1068,6 +1075,7 @@ input UserSubscriptionWhereInput {
 input UserUpdateInput {
   name: String
   email: String
+  username: String
   age: Int
   posts: PostUpdateManyWithoutAuthorInput
   comments: CommentUpdateManyWithoutAuthorInput
@@ -1076,6 +1084,7 @@ input UserUpdateInput {
 input UserUpdateManyMutationInput {
   name: String
   email: String
+  username: String
   age: Int
 }
 
@@ -1096,6 +1105,7 @@ input UserUpdateOneRequiredWithoutPostsInput {
 input UserUpdateWithoutCommentsDataInput {
   name: String
   email: String
+  username: String
   age: Int
   posts: PostUpdateManyWithoutAuthorInput
 }
@@ -1103,6 +1113,7 @@ input UserUpdateWithoutCommentsDataInput {
 input UserUpdateWithoutPostsDataInput {
   name: String
   email: String
+  username: String
   age: Int
   comments: CommentUpdateManyWithoutAuthorInput
 }
@@ -1246,6 +1257,46 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   email_not_ends_with: String
+  username: String
+
+  """All values that are not equal to given value."""
+  username_not: String
+
+  """All values that are contained in given list."""
+  username_in: [String!]
+
+  """All values that are not contained in given list."""
+  username_not_in: [String!]
+
+  """All values less than the given value."""
+  username_lt: String
+
+  """All values less than or equal the given value."""
+  username_lte: String
+
+  """All values greater than the given value."""
+  username_gt: String
+
+  """All values greater than or equal the given value."""
+  username_gte: String
+
+  """All values containing the given string."""
+  username_contains: String
+
+  """All values not containing the given string."""
+  username_not_contains: String
+
+  """All values starting with the given string."""
+  username_starts_with: String
+
+  """All values not starting with the given string."""
+  username_not_starts_with: String
+
+  """All values ending with the given string."""
+  username_ends_with: String
+
+  """All values not ending with the given string."""
+  username_not_ends_with: String
   age: Int
 
   """All values that are not equal to given value."""
@@ -1279,4 +1330,5 @@ input UserWhereInput {
 input UserWhereUniqueInput {
   id: ID
   email: String
+  username: String
 }

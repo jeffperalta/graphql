@@ -27,31 +27,14 @@ const Mutation = {
         }, info)
     },
 
-    updateUser(parent, args, {db}, info) {
-        const {id,data} = args;
-        const user = db.users.find(u => u.id === id)
+    async updateUser(parent, args, { prisma }, info) {
+        const { id, data } = args;
 
-        if (user) {
-            if (typeof data.email === 'string') {
-                if (db.users.some(u => u.email === data.email && u.id !== id)) {
-                    throw new Error('Email is taken.');
-                }
-                user.email = data.email
-            }
-
-            if (typeof data.name === 'string') {
-                user.name = data.name
-            }
-
-            if (typeof data.age !== 'undefined') {
-                user.age = data.age
-            }
-
-            return user
-
-        } else {
-            throw new Error('User not found.');
-        }
+        return prisma.mutation.updateUser({
+            where: { id },
+            data
+        }, info)
+        
     },
 
     createPost(parent, args, {db, pubsub}, info) {

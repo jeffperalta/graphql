@@ -55,26 +55,47 @@ const Query = {
     grades(parent, args, {db}, info) {
         return [1, 2, 3, 4, 5]
     },
-    posts(parent, args, {db}, info) {
+    posts(parent, args, { prisma }, info) {
+        const opArgs = {}
+        
         if (args.query) {
-            return db.posts.filter(p =>
-                p.title.toLowerCase().includes(args.query.toLowerCase()) ||
-                p.body.toLowerCase().includes(args.query.toLowerCase())
-            )
-        } else {
-            return db.posts
+            opArgs.where = {
+                OR: [{
+                    title_contains: args.query
+                }, {
+                    body_contains: args.query
+                }]
+            }
         }
 
+        return prisma.query.posts(opArgs, info)
+
     },
-    users(parent, args, {db}, info) {
+    users(parent, args, { prisma }, info) {
+        const opArgs = {}
+
         if (args.query) {
-            return db.users.filter(u => u.name.toLowerCase().includes(args.query.toLowerCase()))
-        } else {
-            return db.users
+            opArgs.where = {
+                OR: [{
+                    name_contains: args.query
+                }, {
+                    email_contains: args.query
+                }]
+            }
         }
+
+        return prisma.query.users(opArgs, info)
     },
-    comments(parent, args, {db}, info) {
-        return db.comments;
+    comments(parent, args, { prisma }, info) {
+        const opArgs = {}
+
+        if (args.query) {
+            opArgs.where = {
+                text_contains: args.query
+            }
+        }
+
+        return prisma.query.comments(opArgs, info)
     }
 }
 

@@ -13,7 +13,7 @@ type Query {
     grades: [Int!]!
     posts(query: String): [Post!]!
     users(query: String): [User!]!
-    comments: [Comment!]!
+    comments(query: String): [Comment!]!
 }
 
 type Mutation {

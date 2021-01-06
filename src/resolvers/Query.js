@@ -1,3 +1,5 @@
+import getUserId from '../utils/getUserId'
+
 const Query = {
     id() {
         return 'abc123'
@@ -30,14 +32,6 @@ const Query = {
             email: 'romina@gg.com'
         }
     },
-    post(parent, args, {db}, info) {
-        return {
-            id: '123123-A',
-            title: 'Title of the post',
-            body: 'Body of the post',
-            published: true
-        }
-    },
     greeting(parent, args, {db}, info) {
         if (args['name']) {
             return "Hello, " + args['name'] + "!"
@@ -54,6 +48,30 @@ const Query = {
     },
     grades(parent, args, {db}, info) {
         return [1, 2, 3, 4, 5]
+    },
+    async post(parent, args, { prisma, request }, info) {
+        const userId = getUserId(request, false)
+
+        const opArgs = {
+            where: {
+                id: args.id,
+                OR: [{
+                    published: true
+                },{
+                    author: {
+                        id: userId
+                    }
+                }]
+            }
+        }
+
+        const posts = await prisma.query.posts(opArgs, info)
+
+        if(posts.length === 0 ) {
+            throw new Error('Post not found.')
+        }
+
+        return posts[0]
     },
     posts(parent, args, { prisma }, info) {
         const opArgs = {}

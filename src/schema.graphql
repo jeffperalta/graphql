@@ -6,11 +6,11 @@ type Query {
     gpa: Float
     book: Book!
     user: User!
-    post: Post!
     greeting(name: String): String!
     add(a: Float!, b: Float!): Float!
     addition(nums: [Float]): Float!
     grades: [Int!]!
+    post(id: ID!): Post!
     posts(query: String): [Post!]!
     users(query: String): [User!]!
     comments(query: String): [Comment!]!

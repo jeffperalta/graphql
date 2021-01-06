@@ -1,3 +1,5 @@
+import getUserId from '../utils/getUserId'
+
 const Subscription = {
     count: {
         subscribe(parent, args, { pubsub }, info) {
@@ -56,6 +58,23 @@ const Subscription = {
 
             return prisma.subscription.post(opArgs, info)
 
+        }
+    },
+
+    myPost: {
+        subscribe(parent, args, { prisma, request }, info) {
+            const userId = getUserId(request)
+
+            return prisma.subscription.post({
+                where: {
+                    node: {
+                        author: {
+                            id: userId
+                        }
+                    }
+
+                }
+            }, info)
         }
     }
 }

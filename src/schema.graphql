@@ -34,6 +34,7 @@ type Subscription {
     count: Int!
     comment(postId: ID): CommentSubscriptionPayload!
     post(postId: ID): PostSubscriptionPayload!
+    myPost: PostSubscriptionPayload!
 }
 
 type AuthPayload {

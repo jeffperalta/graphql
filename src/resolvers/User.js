@@ -12,10 +12,21 @@ const User = {
                 return null
             }
         }
+    },
+    posts: {
+        fragment: 'fragment userId on User { id }',
+        resolve(parent, args, { prisma }, info) {
+            return prisma.query.posts({
+                where: {
+                    published: true,
+                    author: {
+                        id: parent.id
+                    }
+                }
+            })
+        }
     }
-    // posts(parent, args, {db}, info) {
-    //     return db.posts.filter(p => p.author === parent.id);
-    // },
+
     // comments(parent, args, {db}, info) {
     //     return db.comments.filter(c => c.author === parent.id);
     // }

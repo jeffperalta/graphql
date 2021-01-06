@@ -15,20 +15,47 @@ const Subscription = {
     },
 
     comment: {
-        subscribe(parent, args, {db, pubsub}, info) {
-            const { postId } = args;
-            const post = db.posts.find(p => p.id === postId && p.published)
-            if(post) {
-                return pubsub.asyncIterator(`comment_${postId}`)
-            }else{
-                throw new Error('Post must exist and must be published.');
-            }
+        subscribe(parent, args, { prisma }, info) {
+             const opArgs = {}
+
+             if(args.postId) {
+                 opArgs.where = { 
+                     node: {
+                         post: {
+                            id: args.postId
+                         }
+                     }
+                 }
+             }
+
+            return prisma.subscription.comment(opArgs, info)
         }
     },
 
     post: {
-        subscribe(parent, args, {pubsub}, info) {
-            return pubsub.asyncIterator(`post`)
+        subscribe(parent, args, { prisma }, info) {
+            const opArgs = {}
+
+            if (args.postId) {
+                opArgs.where = {
+                    node: {
+                        AND: [{
+                            id: args.postId,
+                        },{
+                            published: true
+                        }]
+                    }
+                }
+            }else{
+                opArgs.where = {
+                    node: {
+                        published: true
+                    }
+                }
+            }
+
+            return prisma.subscription.post(opArgs, info)
+
         }
     }
 }

@@ -3,6 +3,7 @@ type User {
   name: String!
   email: String! @unique
   username: String! @unique
+  password: String!
   age: Int
   posts: [Post!]! @relation(name: "PostToUser", onDelete: CASCADE)
   comments: [Comment!]! @relation(name: "CommentToUser", onDelete: CASCADE)

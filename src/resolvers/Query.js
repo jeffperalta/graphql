@@ -25,13 +25,6 @@ const Query = {
             inStock: true
         }
     },
-    user(parent, args, {db}, info) {
-        return {
-            id: '123123',
-            name: 'Romina',
-            email: 'romina@gg.com'
-        }
-    },
     greeting(parent, args, {db}, info) {
         if (args['name']) {
             return "Hello, " + args['name'] + "!"
@@ -48,6 +41,16 @@ const Query = {
     },
     grades(parent, args, {db}, info) {
         return [1, 2, 3, 4, 5]
+    },
+
+    me(parent, args, { prisma, request }, info) {
+        const userId = getUserId(request)
+
+        return prisma.query.user({
+            where: {
+                id: userId
+            }
+        }, info)
     },
     async post(parent, args, { prisma, request }, info) {
         const userId = getUserId(request, false)

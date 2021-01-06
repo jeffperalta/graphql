@@ -5,11 +5,11 @@ type Query {
     employed: Boolean!
     gpa: Float
     book: Book!
-    user: User!
     greeting(name: String): String!
     add(a: Float!, b: Float!): Float!
     addition(nums: [Float]): Float!
     grades: [Int!]!
+    me: User!
     post(id: ID!): Post!
     posts(query: String): [Post!]!
     users(query: String): [User!]!

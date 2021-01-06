@@ -28,114 +28,43 @@ const Mutation = {
     },
 
     async updateUser(parent, args, { prisma }, info) {
-        const { id, data } = args;
+        const { id, data } = args
 
         return prisma.mutation.updateUser({
             where: { id },
             data
         }, info)
+
+    },
+
+    async createPost(parent, args, { prisma }, info) {
+        const data = { ... args.data }
+
+        data.author = {
+            connect: {
+                id: data.author
+            }
+        }
+
+        return prisma.mutation.createPost({ data }, info)
+    },
+
+    async deletePost(parent, args, { prisma }, info) {        
+        return prisma.mutation.deletePost({
+            where: {
+                id: args.id
+            }
+        }, info)
+    },
+
+    async updatePost(parent, args, { prisma }, info) {
+        const { id, data } = args
+
+        return prisma.mutation.updatePost({
+            where: { id },
+            data
+        }, info)
         
-    },
-
-    createPost(parent, args, {db, pubsub}, info) {
-        if (db.users.some(u => u.id === args.data.author)) {
-            const post = {
-                id: uuidv4(),
-                ...args.data
-            }
-            db.posts.push(post)
-
-            if (args.data.published) {
-                pubsub.publish('post', {
-                    post: {
-                        mutation: 'CREATED',
-                        data: post
-                    }
-                })
-            }
-
-            return post;
-        } else {
-            throw new Error('User not found.');
-        }
-    },
-
-    deletePost(parent, args, {db, pubsub}, info) {
-        const index = db.posts.findIndex(p => p.id === args.id)
-        if (index >= 0) {
-            db.comments = db.comments.filter(c => c.post !== args.id)
-            const [post] = db.posts.splice(index, 1);
-
-            if (post.published) {
-                pubsub.publish('post', {
-                    post: {
-                        mutation: 'DELETED',
-                        data: post
-                    }
-                })
-            }
-
-            return post;
-        } else {
-            throw new Error('Post not found.');
-        }
-    },
-
-    updatePost(parent, args, {db,pubsub}, info) {
-         const {id,data} = args
-         const post = db.posts.find(p => p.id === id)
-         const originalPost = {...post};
-
-         if(post) {
-            if (typeof data.title === 'string') {
-                post.title = data.title
-            }
-
-            if (typeof data.body === 'string') {
-                post.body = data.body
-            }
-
-            if (typeof data.published === 'boolean') {
-                post.published = data.published
-
-                if(originalPost.published && !post.published) {
-                    pubsub.publish('post', {
-                        post: {
-                            mutation: 'DELETED',
-                            data: originalPost
-                        }
-                    })
-                } else if (!originalPost.published && post.published) {
-                    pubsub.publish('post', {
-                        post: {
-                            mutation: 'CREATED',
-                            data: post
-                        }
-                    })
-                } else if (post.published) {
-                    pubsub.publish('post', {
-                        post: {
-                            mutation: 'UPDATED',
-                            data: post
-                        }
-                    })
-                }
-
-            } else if (post.published) {
-                pubsub.publish('post', {
-                    post: {
-                        mutation: 'UPDATED',
-                        data: post
-                    }
-                })
-            }
-                
-            
-            return post
-
-         }else{
-            throw new Error('Post not found.');
-         }
     },
 
     createComment(parent, args, {db, pubsub}, info) {

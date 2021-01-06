@@ -12,6 +12,7 @@ type Query {
     me: User!
     post(id: ID!): Post!
     posts(query: String): [Post!]!
+    myPosts(query: String): [Post!]!
     users(query: String): [User!]!
     comments(query: String): [Comment!]!
 }

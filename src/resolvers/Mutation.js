@@ -93,7 +93,21 @@ const Mutation = {
         return prisma.mutation.createPost({ data }, info)
     },
 
-    async deletePost(parent, args, { prisma }, info) {        
+    async deletePost(parent, args, { prisma, request }, info) {      
+        
+        const userId = getUserId(request)
+
+        const postExist = await prisma.exists.Post({
+            id: args.id,
+            author: {
+                id: userId
+            }
+        })
+
+        if(!postExist) {
+            throw new Error('Unable to delete post')
+        }
+
         return prisma.mutation.deletePost({
             where: {
                 id: args.id
@@ -101,7 +115,21 @@ const Mutation = {
         }, info)
     },
 
-    async updatePost(parent, args, { prisma }, info) {
+    async updatePost(parent, args, { prisma, request }, info) {
+
+        const userId = getUserId(request)
+
+        const postExist = await prisma.exists.Post({
+            id: args.id,
+            author: {
+                id: userId
+            }
+        })
+
+        if (!postExist) {
+            throw new Error('Unable to update post')
+        }
+
         const { id, data } = args
 
         return prisma.mutation.updatePost({

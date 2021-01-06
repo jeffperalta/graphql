@@ -50,7 +50,7 @@ const Query = {
             where: {
                 id: userId
             }
-        }, info)
+        })
     },
     async post(parent, args, { prisma, request }, info) {
         const userId = getUserId(request, false)

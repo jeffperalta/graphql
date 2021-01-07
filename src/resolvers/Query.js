@@ -77,10 +77,10 @@ const Query = {
         return posts[0]
     },
     posts(parent, args, { prisma }, info) {
-        const opArgs = {
-            where: {
-                published: true
-            }
+        const opArgs = args.pagination ? {... args.pagination} : {}
+
+        opArgs.where = {
+            published: true
         }
         
         if (args.query) {
@@ -96,12 +96,12 @@ const Query = {
     },
     myPosts(parent, args, { prisma, request }, info) {
         const userId = getUserId(request)
+        
+        const opArgs = args.pagination ? {... args.pagination} : {}
 
-        const opArgs = {
-            where: {
-                author: {
-                    id: userId
-                }
+        opArgs.where = {
+            author: {
+                id: userId
             }
         }
         
@@ -117,7 +117,7 @@ const Query = {
 
     },
     users(parent, args, { prisma }, info) {
-        const opArgs = {}
+        const opArgs = args.pagination ? {... args.pagination} : {}
 
         if (args.query) {
             opArgs.where = {
@@ -130,7 +130,7 @@ const Query = {
         return prisma.query.users(opArgs, info)
     },
     comments(parent, args, { prisma }, info) {
-        const opArgs = {}
+        const opArgs = args.pagination ? {... args.pagination} : {}
 
         if (args.query) {
             opArgs.where = {

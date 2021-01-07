@@ -11,10 +11,10 @@ type Query {
     grades: [Int!]!
     me: User!
     post(id: ID!): Post!
-    posts(query: String): [Post!]!
-    myPosts(query: String): [Post!]!
-    users(query: String): [User!]!
-    comments(query: String): [Comment!]!
+    posts(query: String, pagination: Pagination): [Post!]!
+    myPosts(query: String, pagination: Pagination): [Post!]!
+    users(query: String, pagination: Pagination): [User!]!
+    comments(query: String, pagination: Pagination): [Comment!]!
 }
 
 type Mutation {
@@ -40,6 +40,11 @@ type Subscription {
 type AuthPayload {
     token: String!
     user: User!
+}
+
+input Pagination {
+    first: Int!
+    skip: Int
 }
 
 input LoginUserInput {

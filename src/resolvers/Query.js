@@ -79,6 +79,8 @@ const Query = {
     posts(parent, args, { prisma }, info) {
         const opArgs = args.pagination ? {... args.pagination} : {}
 
+        opArgs.orderBy = args.orderBy
+
         opArgs.where = {
             published: true
         }
@@ -98,6 +100,8 @@ const Query = {
         const userId = getUserId(request)
         
         const opArgs = args.pagination ? {... args.pagination} : {}
+
+        opArgs.orderBy = args.orderBy
 
         opArgs.where = {
             author: {
@@ -119,6 +123,8 @@ const Query = {
     users(parent, args, { prisma }, info) {
         const opArgs = args.pagination ? {... args.pagination} : {}
 
+        opArgs.orderBy = args.orderBy
+
         if (args.query) {
             opArgs.where = {
                 OR: [{
@@ -131,6 +137,8 @@ const Query = {
     },
     comments(parent, args, { prisma }, info) {
         const opArgs = args.pagination ? {... args.pagination} : {}
+
+        opArgs.orderBy = args.orderBy
 
         if (args.query) {
             opArgs.where = {

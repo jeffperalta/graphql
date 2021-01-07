@@ -1,3 +1,5 @@
+# import UserOrderByInput, PostOrderByInput, CommentOrderByInput from './generated/prisma.graphql'
+
 type Query {
     id: ID!
     name: String!
@@ -11,10 +13,10 @@ type Query {
     grades: [Int!]!
     me: User!
     post(id: ID!): Post!
-    posts(query: String, pagination: Pagination): [Post!]!
-    myPosts(query: String, pagination: Pagination): [Post!]!
-    users(query: String, pagination: Pagination): [User!]!
-    comments(query: String, pagination: Pagination): [Comment!]!
+    posts(query: String, pagination: Pagination, orderBy: PostOrderByInput): [Post!]!
+    myPosts(query: String, pagination: Pagination, orderBy: PostOrderByInput): [Post!]!
+    users(query: String, pagination: Pagination, orderBy: UserOrderByInput): [User!]!
+    comments(query: String, pagination: Pagination, orderBy: CommentOrderByInput): [Comment!]!
 }
 
 type Mutation {

@@ -7,11 +7,12 @@
     "start": "node dist/index.js",
     "heroku-postbuild": "babel src --out-dir dist --copy-files",
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js --ext js,graphql --exec babel-node",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "env-cmd -f ./config/test.env nodemon src/index.js --ext js,graphql --exec babel-node",
     "get-schema": "env-cmd -f ./config/dev.env graphql get-schema -p prisma",
     "deploy-login": "prisma login",
     "deploy-dev": "prisma deploy -e ./config/dev.env",
-    "deploy-prod": "prisma deploy -e ./config/prod.env"
+    "deploy-prod": "prisma deploy -e ./config/prod.env",
+    "deploy-test": "prisma deploy -e ./config/test.env"
   },
   "author": "",
   "license": "ISC",

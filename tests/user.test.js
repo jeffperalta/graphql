@@ -1,23 +1,91 @@
-import {getFirstName , isValidPassword}  from '../src/utils/user'
+import 'cross-fetch/polyfill'
+import prisma from '../src/prisma'
+import seedDatabase, { userOne } from './utils/seedDatabase'
+import getClient from './utils/getClient'
+import {
+    createUser,
+    getUsers,
+    login,
+    getProfile
+} from './utils/operations'
 
-test('Should return first name when given full name', () => {
-    const firstName = getFirstName("Jeff Peralta")
-    expect(firstName).toBe('Jeff')
+const client = getClient()
+
+beforeEach(seedDatabase)
+
+test('Should create a new user', async () => {
+    const variables = {
+        data: {
+            name: 'Mango Man',
+            username: 'mango.man',
+            email: 'mango@email.com',
+            password: 'MyPass123'
+        }
+    }
+    const response = await client.mutate({
+        mutation: createUser,
+        variables
+    })
+
+    const exists = await prisma.exists.User({
+        id: response.data.createUser.user.id
+    })
+    expect(exists).toBe(true)
 })
 
-test('Should return first name when given first name', ()=> {
-    const firstName = getFirstName("Jeff")
-    expect(firstName).toBe('Jeff')
+test('Should expose public author profiles', async () => {
+    const response = await client.query({
+        query: getUsers
+    })
+
+    expect(response.data.users.length).toBe(2)
+    expect(response.data.users[0].email).toBe(null)
+    expect(response.data.users[0].name).toBe('Jen')
 })
 
-test('Should reject password shorter than 8 characters', () => {
-    expect(isValidPassword('short')).toBe(false)
+test('Should not login with bad credentials', async () => {
+    const variables = {
+        data: {
+            username: 'jeff.test',
+            password: "red098!@#$"
+        }
+    }
+
+    await expect(
+        client.mutate({
+            mutation: login,
+            variables
+        })
+    ).rejects.toThrow()
 })
 
-test('Should reject password that contacts the word \'password\'', () => {
-    expect(isValidPassword('longPassword')).toBe(false)
+test('Should not signup user with invalid password', async () => {
+    const variables = {
+        data: {
+            name: 'Jeff2',
+            username: 'jeff2.test',
+            email: "jeff2@email.com",
+            password: 'pass'
+        }
+    }
+
+    await expect(
+        client.mutate({
+            mutation: createUser,
+            variables
+        })
+    ).rejects.toThrow()
 })
 
-test('Should correctly validate a valid password', () => {
-    expect(isValidPassword('longPass123')).toBe(true)
+test('Should fetch user profile', async () => {
+    const client = getClient(userOne.jwt)
+    const {
+        data
+    } = await client.query({
+        query: getProfile
+    })
+
+    expect(data.me.id).toBe(userOne.user.id)
+    expect(data.me.name).toBe(userOne.user.name)
+    expect(data.me.email).toBe(userOne.user.email)
 })
